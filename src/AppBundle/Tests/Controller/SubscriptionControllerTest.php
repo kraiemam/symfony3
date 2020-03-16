@@ -129,7 +129,35 @@ class SubscriptionControllerTest extends WebTestCase
         // Test if response is OK
         $this->assertSame(201, $client->getResponse()->getStatusCode(),'Unexpected status code response ');
     }
+    public function testUpdateAction()
+    {
+        // Create a new client to browse the application
+        $client = static::createClient();
+        $client->request(
+            'PUT',
+            '/subscription/1',
+            array(),
+            array(),
+            array('CONTENT_TYPE' => 'application/json'),
+            '{
+                "contact": {
+                    "id":1,
+                    "name": "david",
+                    "firstname": "david"
+                },
+                "product": {
+                    "id":1,
+                    "label": "smartphone"
+                },
+                "begin_date": "2020-03-16T00:00:00+01:00",
+                "end_date": "2020-03-17T00:00:00+01:00"
+            }'
+        );
 
+        $response = $client->getResponse();
+        // Test if response is OK
+        $this->assertSame(201, $client->getResponse()->getStatusCode(),'Unexpected status code response ');
+    }
     public function testDeleteAction()
     {
         // Create a new client to browse the application
