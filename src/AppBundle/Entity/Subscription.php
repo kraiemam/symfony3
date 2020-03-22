@@ -20,14 +20,16 @@ class Subscription
     private $id;
 
   
-   /**
-     * @ORM\ManyToOne(targetEntity="Contact", cascade={"all"}, fetch="EAGER")
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Contact", inversedBy="subsciption")
+     * @ORM\JoinColumn(name="contact_id", referencedColumnName="id")
      */
     private $contact;
 
-
     /**
-     * @ORM\ManyToOne(targetEntity="Product", cascade={"all"}, fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="Product", inversedBy="subsciption")
+     * @ORM\JoinColumn(name="product_id", referencedColumnName="id")
      */
     private $product;
 
@@ -63,7 +65,7 @@ class Subscription
   public function setContact($contact)
   {
     $this->contact = $contact;
-    
+    return $this;
   }
 
   /**

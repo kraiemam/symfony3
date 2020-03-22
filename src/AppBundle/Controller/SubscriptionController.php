@@ -36,8 +36,21 @@ class SubscriptionController extends Controller
      */
     public function createAction(Request $request)
     {
+        
+        $datacatprod = json_decode($request->getContent(), true);
+        $contact=$this->getDoctrine()->getRepository('AppBundle:Contact')->find($datacatprod["contact_id"]);
+        $product=$this->getDoctrine()->getRepository('AppBundle:Product')->find($datacatprod["product_id"] );
+           if (empty($contact)) {
+                 return new Response("contact not found", Response::HTTP_NOT_FOUND);
+            } 
+           if (empty($product)) {
+                return new Response("product not found", Response::HTTP_NOT_FOUND);
+            } 
         $data = $request->getContent();
         $Subscription = $this->get('jms_serializer')->deserialize($data, 'AppBundle\Entity\Subscription', 'json');
+        
+        $Subscription->setContact($contact);
+        $Subscription->setProduct($product);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($Subscription);
@@ -51,14 +64,27 @@ class SubscriptionController extends Controller
      */
   public function updateAction($id,Request $request)
      { 
+        $datacatprod = json_decode($request->getContent(), true);
+        $contact=$this->getDoctrine()->getRepository('AppBundle:Contact')->find($datacatprod["contact_id"]);
+        $product=$this->getDoctrine()->getRepository('AppBundle:Product')->find($datacatprod["product_id"] );
     $data = $request->getContent();
     $Subscriptions = $this->get('jms_serializer')->deserialize($data, 'AppBundle\Entity\Subscription', 'json');
+    
      $sn = $this->getDoctrine()->getManager();
      $Subscription = $this->getDoctrine()->getRepository('AppBundle:Subscription')->find($id);
+     if (empty($contact)) {
+       return new Response("contact not found", Response::HTTP_NOT_FOUND);
+     } 
+     if (empty($product)) {
+       return new Response("product not found", Response::HTTP_NOT_FOUND);
+     } 
     if (empty($Subscription)) {
        return new Response("Subscription not found", Response::HTTP_NOT_FOUND);
      } 
+
         $Subscriptions->setId(intval($id));
+        $Subscriptions->setContact($contact);
+        $Subscriptions->setProduct($product);
         $em = $this->getDoctrine()->getManager();
         $em->merge($Subscriptions);
         $em->flush();
@@ -73,7 +99,6 @@ class SubscriptionController extends Controller
 
       $em = $this->getDoctrine()->getManager();
       $Subscription = $this->getDoctrine()->getRepository('AppBundle:Subscription')->find($id);
-    
     if (empty($Subscription)) {
       
        return new Response('Subscription not found', Response::HTTP_NOT_FOUND);
@@ -82,7 +107,7 @@ class SubscriptionController extends Controller
       $em->remove($Subscription);
       $em->flush();
      }
-     return new Response('deleted successfully', Response::HTTP_NOT_FOUND);
+     return new Response('deleted successfully',  Response::HTTP_OK);
      
      }
 }
